@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "module": "CommonJS",
+    "moduleResolution": "NodeNext",
+    "isolatedModules": true,
+    "target": "ESNext",
+    "noEmit": true,
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedIndexedAccess": true
+  }
+}

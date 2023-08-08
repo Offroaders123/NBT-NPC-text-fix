@@ -1,0 +1,11 @@
+{
+  "name": "nbt-npc-text-fix",
+  "private": true,
+  "type": "commonjs",
+  "dependencies": {
+    "nbtify": "^1.63.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.4.8"
+  }
+}
