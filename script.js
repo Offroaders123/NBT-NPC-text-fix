@@ -2,8 +2,8 @@ import * as fs from 'node:fs/promises';
 import * as nbt from 'nbtify';
 
 const inputData = await fs.readFile('input.txt', 'utf8');
-const inputFormatted = nbt.stringify(nbt.parse(inputData),{ space: 2 });
-console.log(nbt.parse(inputFormatted),"\n");
+const inputActions = getActions(inputData);
+console.log(inputActions,"\n");
 
 const regex = /\\\"button_name\\\":\\\"([^,]*?)\\\",(\\\"data\\\":\[.*?\]),\\\"mode\\\"[ ]*:[ ]*(.*?),\\\"text\\\":\\\"(.*?)\\\"/g;
 
@@ -17,11 +17,25 @@ const outputData = inputData.replace(regex, (_match, buttonName, data, mode, _te
   return `\\\"button_name\\\":\\\"${buttonName}\\\",${data},\\\"mode\\\":${mode},\\\"text\\\":\\\"${joinedCommands}\\\"`;
 });
 
-const outputFormatted = nbt.stringify(nbt.parse(outputData),{ space: 2 });
-console.log(nbt.parse(outputFormatted),"\n");
+const outputActions = getActions(outputData);
+console.log(outputActions,"\n");
 
 await fs.writeFile('output.txt', outputData, 'utf8');
-await fs.writeFile('test/inputFormatted.txt', inputFormatted, 'utf8');
-await fs.writeFile('test/outputFormatted.txt', outputFormatted, 'utf8');
+await fs.writeFile('test/inputFormatted.txt', JSON.stringify(inputActions,null,2), 'utf8');
+await fs.writeFile('test/outputFormatted.txt', JSON.stringify(outputActions,null,2), 'utf8');
 
 console.info("The NBT has been written to output.txt.");
+
+/**
+ * @param { string } inputData
+*/
+function getActions(inputData){
+  const nbtObject = nbt.parse(inputData);
+  /** @type { string } */
+  const actionString = nbtObject.tag.movingEntity.Occupants
+    .map(/** @param { any } occupant */ (occupant) => occupant.SaveData.Actions)
+    .filter(Boolean);
+  /** @type { Record<string,any>[] } */
+  const actions = JSON.parse(actionString);
+  return actions;
+}
