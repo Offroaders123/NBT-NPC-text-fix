@@ -3,6 +3,10 @@
   "private": true,
   "type": "module",
   "main": "./script.js",
+  "scripts": {
+    "watch": "node --watch ./",
+    "diff": "mkdir ./test; node ./; git diff --no-index ./test/inputFormatted.txt ./test/outputFormatted.txt"
+  },
   "dependencies": {
     "nbtify": "^1.63.0"
   },
