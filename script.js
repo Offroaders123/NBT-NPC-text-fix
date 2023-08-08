@@ -1,7 +1,7 @@
-const fs = require('fs');
+import * as fs from 'node:fs';
+import * as nbt from 'nbtify';
 
-async function main() {
-  const nbt = await import("nbtify");
+function main() {
   const inputData = fs.readFileSync('input.txt', 'utf8');
   const inputFormatted = nbt.stringify(nbt.parse(inputData),{ space: 2 });
   console.log(JSON.parse(nbt.parse(inputFormatted).tag.movingEntity.Occupants.map(occupant => occupant.SaveData.Actions).filter(Boolean)[0]),"\n");
