@@ -45,7 +45,10 @@ function formatActions(inputData){
   }
 }
 
-function gg(){
+/**
+ * @param { any } inputData
+*/
+function gg(inputData){
   /** @type { string } */
   const actionString = inputData.tag.movingEntity.Occupants
     .map(/** @param { any } occupant */ (occupant) => occupant.SaveData.Actions)
