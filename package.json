@@ -8,9 +8,9 @@
     "diff": "mkdir ./test; node ./; git diff --no-index ./test/inputFormatted.txt ./test/outputFormatted.txt"
   },
   "dependencies": {
-    "nbtify": "^1.63.0"
+    "nbtify": "^1.69.420"
   },
   "devDependencies": {
-    "@types/node": "^20.4.8"
+    "@types/node": "^20.5.7"
   }
 }
