@@ -41,6 +41,7 @@ function formatActions(inputData){
     const actions = JSON.parse(Actions);
     Actions = JSON.stringify(actions,null,2);
     console.log(actions);
+    // console.log(actions.map(action => action.data.map(data => data.cmd_line)));
     occupant.SaveData.Actions = Actions;
   }
 }
