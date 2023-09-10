@@ -4,7 +4,7 @@ import * as nbt from 'nbtify';
 const inputData = await fs.readFile('input.txt', 'utf8');
 const inputObject = nbt.parse(inputData);
 await fs.writeFile("test/nbt.nbt",await nbt.write(inputObject));
-formatActions(inputObject);
+// formatActions(inputObject);
 // console.log(inputObject,"\n");
 
 const regex = /\\\"button_name\\\":\\\"([^,]*?)\\\",(\\\"data\\\":\[.*?\]),\\\"mode\\\"[ ]*:[ ]*(.*?),\\\"text\\\":\\\"(.*?)\\\"/g;
