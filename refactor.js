@@ -23,10 +23,10 @@ await fs.writeFile(INPUT_FORMATTED,inputFormatted);
 await fs.writeFile(OUTPUT_FORMATTED,outputFormatted);
 
 /**
- * @param { any } inputNBT
+ * @param { NBT.RootTag } inputNBT
 */
 function formatActions(inputNBT){
-  const outputNBT = inputNBT;
+  const outputNBT = /** @type { any } */ (inputNBT);
 
   for (const occupant of outputNBT.tag.movingEntity.Occupants){
     if (occupant.SaveData.Trident !== undefined){
@@ -36,18 +36,21 @@ function formatActions(inputNBT){
     if (occupant.SaveData.Actions === undefined) continue;
 
     const outputActions = JSON.parse(occupant.SaveData.Actions);
+    console.log(occupant.SaveData.Actions);
 
     for (const action of outputActions){
       const outputText = action.data
         .map((/** @type { any } */ data) => data.cmd_line)
         .join("\n");
-      console.log(outputText,"\n");
+      // console.log(outputText,"\n");
 
       action.text = outputText;
     }
 
     occupant.SaveData.Actions = JSON.stringify(outputActions,null,2);
+
+    console.log(occupant.SaveData.Actions);
   }
 
-  return outputNBT;
+  return /** @type { NBT.RootTag } */ (outputNBT);
 }
