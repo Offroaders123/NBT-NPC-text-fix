@@ -3,24 +3,14 @@ import * as NBT from "nbtify";
 
 const INPUT_SRC = "./input.txt";
 const OUTPUT_SRC = "./output.txt";
-const INPUT_NBT = "./test/nbt.nbt";
-const INPUT_FORMATTED = "./test/inputFormatted.txt";
-const OUTPUT_FORMATTED = "./test/outputFormatted.txt";
 
 const inputText = await fs.readFile(INPUT_SRC,{ encoding: "utf-8" });
 const inputNBT = NBT.parse(inputText);
-const inputFormatted = NBT.stringify(inputNBT,{ space: 2 });
-
-const inputBuffer = await NBT.write(inputNBT);
-await fs.writeFile(INPUT_NBT,inputBuffer);
 
 const outputNBT = formatActions(inputNBT);
 const outputText = NBT.stringify(outputNBT);
-const outputFormatted = NBT.stringify(outputNBT,{ space: 2 });
 
 await fs.writeFile(OUTPUT_SRC,outputText);
-await fs.writeFile(INPUT_FORMATTED,inputFormatted);
-await fs.writeFile(OUTPUT_FORMATTED,outputFormatted);
 
 /**
  * @param { NBT.RootTag } inputNBT

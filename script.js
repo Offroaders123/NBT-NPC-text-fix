@@ -2,10 +2,6 @@ import * as fs from 'node:fs/promises';
 import * as nbt from 'nbtify';
 
 const inputData = await fs.readFile('input.txt', 'utf8');
-const inputObject = nbt.parse(inputData);
-await fs.writeFile("test/nbt.nbt",await nbt.write(inputObject));
-// formatActions(inputObject);
-// console.log(inputObject,"\n");
 
 const regex = /\\\"button_name\\\":\\\"([^,]*?)\\\",(\\\"data\\\":\[.*?\]),\\\"mode\\\"[ ]*:[ ]*(.*?),\\\"text\\\":\\\"(.*?)\\\"/g;
 
@@ -24,8 +20,6 @@ formatActions(outputObject);
 // console.log(outputObject,"\n");
 
 await fs.writeFile('output.txt', nbt.stringify(outputObject), 'utf8');
-await fs.writeFile('test/inputFormatted.txt', nbt.stringify(inputObject,{ space: 2 }), 'utf8');
-await fs.writeFile('test/outputFormatted.txt', nbt.stringify(outputObject,{ space: 2 }), 'utf8');
 
 console.info("The NBT has been written to output.txt.");
 
