@@ -23,7 +23,7 @@ const outputObject = nbt.parse(outputData);
 formatActions(outputObject);
 // console.log(outputObject,"\n");
 
-await fs.writeFile('output.txt', outputData, 'utf8');
+await fs.writeFile('output.txt', nbt.stringify(outputObject), 'utf8');
 await fs.writeFile('test/inputFormatted.txt', nbt.stringify(inputObject,{ space: 2 }), 'utf8');
 await fs.writeFile('test/outputFormatted.txt', nbt.stringify(outputObject,{ space: 2 }), 'utf8');
 
