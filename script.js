@@ -6,7 +6,7 @@ import * as NBT from "nbtify";
  * @typedef { import("./entity.d.ts").Action } Action
 */
 
-const inputData = await fs.readFile("./input.txt",{ encoding: "utf-8" });
+const inputData = await fs.readFile("./input.snbt",{ encoding: "utf-8" });
 
 /** @type { Entity } */ // @ts-expect-error
 const nbt = NBT.parse(inputData);
@@ -16,8 +16,8 @@ formatActions(nbt);
 // @ts-expect-error
 const outputData = NBT.stringify(nbt);
 
-await fs.writeFile("./output.txt",outputData,{ encoding: "utf-8" });
-console.info("The NBT has been written to 'output.txt'.");
+await fs.writeFile("./output.snbt",outputData,{ encoding: "utf-8" });
+console.info("The NBT has been written to 'output.snbt'.");
 
 /**
  * @param { Entity } entity
@@ -41,6 +41,6 @@ function formatActions(entity){
       action.text = text;
     }
 
-    occupant.SaveData.Actions = JSON.stringify(actions,null,2);
+    occupant.SaveData.Actions = JSON.stringify(actions);
   }
 }
