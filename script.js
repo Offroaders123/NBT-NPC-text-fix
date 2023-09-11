@@ -1,19 +1,29 @@
 import * as fs from "node:fs/promises";
 import * as NBT from "nbtify";
 
-import type { Entity, Action } from "./entity.js";
+/**
+ * @typedef { import("./entity.d.ts").Entity } Entity
+ * @typedef { import("./entity.d.ts").Action } Action
+*/
 
 const inputData = await fs.readFile("./input.txt",{ encoding: "utf-8" });
-const nbt = NBT.parse(inputData) as unknown as Entity;
+
+/** @type { Entity } */ // @ts-expect-error
+const nbt = NBT.parse(inputData);
 
 formatActions(nbt);
 
-const outputData = NBT.stringify(nbt as unknown as NBT.RootTag);
+// @ts-expect-error
+const outputData = NBT.stringify(nbt);
 
 await fs.writeFile("./output.txt",outputData,{ encoding: "utf-8" });
 console.info("The NBT has been written to 'output.txt'.");
 
-function formatActions(entity: Entity): void {
+/**
+ * @param { Entity } entity
+ * @returns { void }
+*/
+function formatActions(entity){
   for (const occupant of entity.tag.movingEntity.Occupants){
     const { Actions, Trident } = occupant.SaveData;
 
@@ -22,7 +32,9 @@ function formatActions(entity: Entity): void {
     }
 
     if (Actions === undefined) continue;
-    const actions = JSON.parse(Actions) as Action[];
+
+    /** @type { Action[] } */
+    const actions = JSON.parse(Actions);
 
     for (const action of actions){
       const text = action.data.map(data => data.cmd_line).join("\n");
