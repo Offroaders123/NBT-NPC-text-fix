@@ -1,6 +1,8 @@
 import * as fs from 'node:fs/promises';
 import * as nbt from 'nbtify';
 
+import type { Entity, Action } from './entity.js';
+
 const inputData = await fs.readFile('input.txt', 'utf8');
 
 const regex = /\\\"button_name\\\":\\\"([^,]*?)\\\",(\\\"data\\\":\[.*?\]),\\\"mode\\\"[ ]*:[ ]*(.*?),\\\"text\\\":\\\"(.*?)\\\"/g;
@@ -15,21 +17,21 @@ const outputData = inputData.replace(regex, (_match, buttonName, data, mode, _te
   return `\\\"button_name\\\":\\\"${buttonName}\\\",${data},\\\"mode\\\":${mode},\\\"text\\\":\\\"${joinedCommands}\\\"`;
 });
 
-const outputObject = nbt.parse(outputData);
+const outputObject = nbt.parse(outputData) as unknown as Entity;
 formatActions(outputObject);
 // console.log(outputObject,"\n");
 
-await fs.writeFile('output.txt', nbt.stringify(outputObject), 'utf8');
+await fs.writeFile('output.txt', nbt.stringify(outputObject as unknown as nbt.RootTag), 'utf8');
 
 console.info("The NBT has been written to output.txt.");
 
-function formatActions(inputData: any){
+function formatActions(inputData: Entity){
   const { Occupants } = inputData.tag.movingEntity;
   for (const occupant of Occupants){
     if (occupant.SaveData.Trident) formatActions(occupant.SaveData.Trident);
     let { Actions } = occupant.SaveData;
     if (Actions === undefined) continue;
-    const actions = JSON.parse(Actions);
+    const actions = JSON.parse(Actions) as Action[];
     Actions = JSON.stringify(actions,null,2);
     console.log(actions);
     // console.log(actions.map(action => action.data.map(data => data.cmd_line)));
