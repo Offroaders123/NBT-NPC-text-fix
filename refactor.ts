@@ -3,44 +3,32 @@ import * as NBT from "nbtify";
 
 import type { Entity, Action } from "./entity.js";
 
-const INPUT_SRC = "./input.txt";
-const OUTPUT_SRC = "./output.txt";
+const inputData = await fs.readFile("./input.txt",{ encoding: "utf-8" });
+const nbt = NBT.parse(inputData) as unknown as Entity;
 
-const inputText = await fs.readFile(INPUT_SRC,{ encoding: "utf-8" });
-const inputNBT = NBT.parse(inputText) as unknown as Entity;
+formatActions(nbt);
 
-const outputNBT = formatActions(inputNBT);
-const outputText = NBT.stringify(outputNBT as unknown as NBT.RootTag);
+const outputData = NBT.stringify(nbt as unknown as NBT.RootTag);
 
-await fs.writeFile(OUTPUT_SRC,outputText);
+await fs.writeFile("./output.txt",outputData,{ encoding: "utf-8" });
+console.info("The NBT has been written to 'output.txt'.");
 
-function formatActions(inputNBT: Entity){
-  const outputNBT = inputNBT;
+function formatActions(entity: Entity): void {
+  for (const occupant of entity.tag.movingEntity.Occupants){
+    const { Actions, Trident } = occupant.SaveData;
 
-  for (const occupant of outputNBT.tag.movingEntity.Occupants){
-    if (occupant.SaveData.Trident !== undefined){
-      formatActions(occupant.SaveData.Trident);
+    if (Trident !== undefined){
+      formatActions(Trident);
     }
 
-    if (occupant.SaveData.Actions === undefined) continue;
+    if (Actions === undefined) continue;
+    const actions = JSON.parse(Actions) as Action[];
 
-    const outputActions = JSON.parse(occupant.SaveData.Actions) as Action[];
-    // console.log(occupant.SaveData.Actions);
-
-    for (const action of outputActions){
-      const outputText = action.data
-        .map(data => data.cmd_line)
-        .join("\n");
-      // console.log(outputText,"\n");
-      console.log(action,"\n");
-
-      action.text = outputText;
+    for (const action of actions){
+      const text = action.data.map(data => data.cmd_line).join("\n");
+      action.text = text;
     }
 
-    occupant.SaveData.Actions = JSON.stringify(outputActions,null,2);
-
-    // console.log(occupant.SaveData.Actions);
+    occupant.SaveData.Actions = JSON.stringify(actions,null,2);
   }
-
-  return outputNBT;
 }

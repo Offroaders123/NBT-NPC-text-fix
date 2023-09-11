@@ -8,7 +8,7 @@ export interface Entity {
 
 export interface Occupant {
   SaveData: {
-    Actions: string;
+    Actions?: string;
     Trident?: Entity;
   };
 }
