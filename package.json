@@ -7,6 +7,6 @@
     "nbtify": "^1.69.420"
   },
   "devDependencies": {
-    "@types/node": "^20.5.7"
+    "@types/node": "^20.6.0"
   }
 }

@@ -7,7 +7,7 @@ const regex = /\\\"button_name\\\":\\\"([^,]*?)\\\",(\\\"data\\\":\[.*?\]),\\\"m
 
 const outputData = inputData.replace(regex, (_match, buttonName, data, mode, _text) => {
   const commands = data.match(/\\\"cmd_line\\\":\\\"(.*?)\\\",(\\\"cmd_ver\\\":|$)/g);
-  const commandLines = commands.map(cmd => {
+  const commandLines = commands.map((cmd: any) => {
     const cmdLine = cmd.match(/\\\"cmd_line\\\":\\\"(.*?)\\\",/);
     return cmdLine ? cmdLine[1].replace(/\\\\"/g, '\\\\\"') : '';
   });
@@ -23,10 +23,7 @@ await fs.writeFile('output.txt', nbt.stringify(outputObject), 'utf8');
 
 console.info("The NBT has been written to output.txt.");
 
-/**
- * @param { any } inputData
-*/
-function formatActions(inputData){
+function formatActions(inputData: any){
   const { Occupants } = inputData.tag.movingEntity;
   for (const occupant of Occupants){
     if (occupant.SaveData.Trident) formatActions(occupant.SaveData.Trident);
@@ -40,15 +37,10 @@ function formatActions(inputData){
   }
 }
 
-/**
- * @param { any } inputData
-*/
-function gg(inputData){
-  /** @type { string } */
-  const actionString = inputData.tag.movingEntity.Occupants
-    .map(/** @param { any } occupant */ (occupant) => occupant.SaveData.Actions)
+function gg(inputData: any){
+  const actionString: string = inputData.tag.movingEntity.Occupants
+    .map((occupant: any) => occupant.SaveData.Actions)
     .filter(Boolean);
-  /** @type { Record<string,any>[] } */
-  const actions = JSON.parse(actionString);
+  const actions: Record<string, any>[] = JSON.parse(actionString);
   return actions;
 }
