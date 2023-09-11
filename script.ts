@@ -1,48 +1,34 @@
-import * as fs from 'node:fs/promises';
-import * as nbt from 'nbtify';
+import * as fs from "node:fs/promises";
+import * as NBT from "nbtify";
 
-import type { Entity, Action } from './entity.js';
+import type { Entity, Action } from "./entity.js";
 
-const inputData = await fs.readFile('input.txt', 'utf8');
+const inputData = await fs.readFile("./input.txt",{ encoding: "utf-8" });
+const nbt = NBT.parse(inputData) as unknown as Entity;
 
-const regex = /\\\"button_name\\\":\\\"([^,]*?)\\\",(\\\"data\\\":\[.*?\]),\\\"mode\\\"[ ]*:[ ]*(.*?),\\\"text\\\":\\\"(.*?)\\\"/g;
+formatActions(nbt);
 
-const outputData = inputData.replace(regex, (_match, buttonName, data, mode, _text) => {
-  const commands = data.match(/\\\"cmd_line\\\":\\\"(.*?)\\\",(\\\"cmd_ver\\\":|$)/g);
-  const commandLines = commands.map((cmd: any) => {
-    const cmdLine = cmd.match(/\\\"cmd_line\\\":\\\"(.*?)\\\",/);
-    return cmdLine ? cmdLine[1].replace(/\\\\"/g, '\\\\\"') : '';
-  });
-  const joinedCommands = commandLines.join('\\\\n');
-  return `\\\"button_name\\\":\\\"${buttonName}\\\",${data},\\\"mode\\\":${mode},\\\"text\\\":\\\"${joinedCommands}\\\"`;
-});
+const outputData = NBT.stringify(nbt as unknown as NBT.RootTag);
 
-const outputObject = nbt.parse(outputData) as unknown as Entity;
-formatActions(outputObject);
-// console.log(outputObject,"\n");
+await fs.writeFile("./output.txt",outputData,{ encoding: "utf-8" });
+console.info("The NBT has been written to 'output.txt'.");
 
-await fs.writeFile('output.txt', nbt.stringify(outputObject as unknown as nbt.RootTag), 'utf8');
+function formatActions(entity: Entity): void {
+  for (const occupant of entity.tag.movingEntity.Occupants){
+    const { Actions, Trident } = occupant.SaveData;
 
-console.info("The NBT has been written to output.txt.");
+    if (Trident !== undefined){
+      formatActions(Trident);
+    }
 
-function formatActions(inputData: Entity){
-  const { Occupants } = inputData.tag.movingEntity;
-  for (const occupant of Occupants){
-    if (occupant.SaveData.Trident) formatActions(occupant.SaveData.Trident);
-    let { Actions } = occupant.SaveData;
     if (Actions === undefined) continue;
     const actions = JSON.parse(Actions) as Action[];
-    Actions = JSON.stringify(actions,null,2);
-    console.log(actions);
-    // console.log(actions.map(action => action.data.map(data => data.cmd_line)));
-    occupant.SaveData.Actions = Actions;
-  }
-}
 
-function gg(inputData: any){
-  const actionString: string = inputData.tag.movingEntity.Occupants
-    .map((occupant: any) => occupant.SaveData.Actions)
-    .filter(Boolean);
-  const actions: Record<string, any>[] = JSON.parse(actionString);
-  return actions;
+    for (const action of actions){
+      const text = action.data.map(data => data.cmd_line).join("\n");
+      action.text = text;
+    }
+
+    occupant.SaveData.Actions = JSON.stringify(actions,null,2);
+  }
 }
